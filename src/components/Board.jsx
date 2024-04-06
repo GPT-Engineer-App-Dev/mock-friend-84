@@ -14,11 +14,73 @@ const Board = () => {
   });
 
   const isValidMove = (index) => {
-    return true;
+    const directions = [
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+    ];
+
+    for (let dir of directions) {
+      let i = index + dir[0] + dir[1] * boardSize;
+      let hasOpponent = false;
+
+      while (i >= 0 && i < boardSize * boardSize) {
+        if (boardState[i] === null) break;
+        if (boardState[i] === !player1Turn) {
+          hasOpponent = true;
+        } else if (hasOpponent) {
+          return true;
+        } else {
+          break;
+        }
+        i += dir[0] + dir[1] * boardSize;
+      }
+    }
+
+    return false;
   };
 
   const flipPieces = (index) => {
-    return boardState;
+    const directions = [
+      [0, 1],
+      [1, 1],
+      [1, 0],
+      [1, -1],
+      [0, -1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+    ];
+
+    const newBoardState = [...boardState];
+    newBoardState[index] = player1Turn;
+
+    for (let dir of directions) {
+      let i = index + dir[0] + dir[1] * boardSize;
+      const flipped = [];
+
+      while (i >= 0 && i < boardSize * boardSize) {
+        if (boardState[i] === null) break;
+        if (boardState[i] === !player1Turn) {
+          flipped.push(i);
+        } else if (flipped.length > 0) {
+          flipped.forEach((idx) => {
+            newBoardState[idx] = player1Turn;
+          });
+          break;
+        } else {
+          break;
+        }
+        i += dir[0] + dir[1] * boardSize;
+      }
+    }
+
+    return newBoardState;
   };
 
   const handleClick = (index) => {
